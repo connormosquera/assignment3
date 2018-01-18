@@ -41,10 +41,10 @@ ScaleF = 0;
 
 % Simulation initiallization
 % InitBlock
-InitCirc
+% InitCirc
 % InitBlock0
 % InitBlock0FD
-% InitVStream
+InitVStream
 % InitHCP
 % InitHCPBlob
 % InitVStreamHCP
