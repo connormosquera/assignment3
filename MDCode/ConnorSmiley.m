@@ -21,7 +21,7 @@ AddCircAtomicArray(3, 3*10^-9, 4*10^-9, 0, 0, 0, T, 1);
 % vy0 = -sqrt(0.02*Ep/Mass1);
 % AddRectAtomicArray(4,4,0,12*AtomSpacing,0,vy0,0,T,1);
 Ep = 1;
-AddParticleStream(5, 2, 10, -2 * pi / 3, 0, Ep * C.q_0, 5);
+AddParticleStream(5, 2, 10, -2 * pi / 3, 0, Ep * C.q_0, 7);
 
 
 Size = 13*AtomSpacing;
