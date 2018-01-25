@@ -2,32 +2,36 @@ function [] = ConnorTraj2(nTraj)
 
     dt=1;
 
-    x=0;
-    x1=0;
-    t=0;
-    t1=0;
-    Vx=0;
-    Vx1=0;
-    Drv=0;
-    Drv1=0;
+    x = zeros(1, nTraj);
+    x1 = 0;
+    t = 0;
+    t1 = 0;
+    Vx = zeros(1, nTraj);
+    Vx1 = 0;
+    Drv = 0;
+    Drv1 = 0;
+    
+    dx = zeros(1, nTraj);
     
     n=200;
 
     for c=1:n
 
         dvx = dt;
-        Vx = Vx + dvx;
-        if rand(1,1)>0.95
-            Vx=0;
+        Vx(1, :) = Vx(1, :) + dvx;
+        for i=1:nTraj 
+            if rand(1,1)>0.95
+                Vx(1,i)=0;
+            end
         end
-        dx = Vx * dt + dt^2 / 2;
+        dx(1, :) = Vx(1, :)* dt + dt^2 / 2;
             
-        x = x + dx;
+        x(1, :) = x(1, :) + dx(1, :);
         t = t + dt;
             
-        x1=[x1 x];
+        x1=[x1 sum(x)];
         t1=[t1 t];
-        Vx1=[Vx1 Vx];
+        Vx1=[Vx1 sum(Vx)];
         
         Drv=sum(Vx1)/numel(Vx1);
         Drv1=[Drv1 Drv];
