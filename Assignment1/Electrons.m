@@ -3,7 +3,7 @@ clearvars -GLOBAL
 close all
 
 global nElectrons T L W MarkerSize
-global x y Vx Vy C
+global x y Vx Vy C time Temp dt
 
 C.q_0 = 1.60217653e-19;             % electron charge
 C.hb = 1.054571596e-34;             % Dirac constant
@@ -22,25 +22,21 @@ L = 100000;
 W = 100000;
 MarkerSize = 1;
 dt = 0.001;
-TStop = 10;
-Vth = sqrt(C.kb*T/C.m_0);
+TStop = 1;
+Vth = sqrt(C.kb*T/(C.m_0*0.26));
+time = 0;
+Temp = T;
 
-x = (rand(1, nElectrons)-0.5)*L; % assigning random initial particle positions
-y = (rand(1, nElectrons)-0.5)*W;
-Vx = (rand(1, nElectrons)-0.5)*Vth;
-Vy = (rand(1, nElectrons)-0.5)*Vth;
+InitElectrons;
 
 figure(1)
 
-for i=1:dt:TStop
-    % PlotElectrons([-L/2 L/2 -W/2 W/2]);
-    plot(x, y, 'bo', 'markers',...
-    MarkerSize,'MarkerFaceColor', 'b');
-    hold on
-    axis([-L/2 L/2 -W/2 W/2]);
-    title('Electrons')
-    xlabel('X')
-    ylabel('Y')
+for i=0:dt:TStop
+    time = i;
+    %PlotAll;
+    PlotElectrons;
+    
+    TempCalc();
     
     x = x - dt * Vx; % moving the particles in one time step
     y = y - dt * Vy;
@@ -58,6 +54,6 @@ for i=1:dt:TStop
              Vy(j) = -Vy(j);
          end
     end
-    pause(0.01)
+    pause(0.0001)
     
 end

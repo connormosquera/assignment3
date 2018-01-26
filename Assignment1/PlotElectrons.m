@@ -2,14 +2,12 @@ function [ output_args ] = PlotElectrons(Limits)
 global nElectrons T L W MarkerSize
 global x y Vx Vy
 
-plot(x, y, 'bo', 'markers',...
-    MarkerSize,'MarkerFaceColor', 'b');
+plot(x, y, 'bo', 'markers',MarkerSize,'MarkerFaceColor', 'b');
 hold on
-hold off
-axis(Limits);
-title('Electrons')
-xlabel('X')
-ylabel('Y')
+axis([-L/2 L/2 -W/2 W/2]);
+xlabel('X');
+ylabel('Y');
+title('Electron Position');
 
 
 end

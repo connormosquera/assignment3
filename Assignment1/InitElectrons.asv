@@ -9,8 +9,12 @@ function [Posx, Posy] = InitElectrons()
 %------------- BEGIN CODE --------------
 global nElectrons T L W
 
-Posx = (rand(1, nElectrons)-0.5)*L;
-Posy = (rand(1, nElectrons)-0.5)*W;
+x = (rand(1, nElectrons)-0.5)*L; % assigning random initial particle positions
+y = (rand(1, nElectrons)-0.5)*W;
+
+vth=67431;
+
+Theta = rand(1, nElectrons)*2*pi;
 
 
 
