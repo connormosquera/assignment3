@@ -3,7 +3,7 @@ clearvars -GLOBAL
 close all
 
 global nElectrons T L W MarkerSize
-global x y Vx Vy C time Temp dt
+global x y Vx Vy C time Temp dt Vth sigmaMB
 
 C.q_0 = 1.60217653e-19;             % electron charge
 C.hb = 1.054571596e-34;             % Dirac constant
@@ -26,6 +26,9 @@ TStop = 1e-12;
 Vth = sqrt(2*C.kb*T/(C.m_0*0.26));
 time = 0;
 Temp = T;
+taumn = 0.2e-12;
+Vth = 67431;
+sigmaMB = sqrt(C.kb*T/(C.m_0*0.26));
 
 InitElectrons;
 
@@ -35,8 +38,8 @@ figure(1)
 hold all
 for i=0:dt:TStop
     time = i;
-    %PlotAll;
-    PlotElectrons(cc);
+    PlotAll;
+    %PlotElectrons(cc);
     
     TempCalc();
     
@@ -44,18 +47,27 @@ for i=0:dt:TStop
     y = y - dt * Vy;
     
     for j=1:nElectrons
-        if x(j) > L/2
+        if x(j) > L
             x(j) = x(j) - L;
-        elseif x(j) < L/2
+        elseif x(j) < 0
             x(j) = x(j) + L;
         end
         
-         if y(j) > W/2
+         if y(j) > W
              Vy(j) = -Vy(j);
-         elseif y(j) < -W/2
+         elseif y(j) < 0
              Vy(j) = -Vy(j);
          end
     end
+    
+    for j=1:nElectrons
+        if (1-exp(-dt/taumn)) > rand()
+            Theta = rand(1, 1)*2*pi;
+            Vx(j) = cos(Theta)*(Vth + sigmaMB*randn(1, 1));
+            Vy(j) = sin(Theta)*(Vth + sigmaMB*randn(1, 1));
+        end
+    end
+    
     pause(0.000001)
     
 end

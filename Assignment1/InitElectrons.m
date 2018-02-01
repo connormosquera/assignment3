@@ -7,17 +7,20 @@ function [x,y,Vx,Vy] = InitElectrons()
 % Syntax:  [output1,output2] = function_name(input1,input2,input3)
 
 %------------- BEGIN CODE --------------
-global nElectrons T L W
-global x y Vx Vy C
+global nElectrons T L W x y Vx Vy C Vth sigmaMB
 
-x = (rand(1, nElectrons)-0.5)*L; % assigning random initial particle positions
-y = (rand(1, nElectrons)-0.5)*W;
-
-Vth=67431;
+x = rand(1, nElectrons)*L; % assigning random initial particle positions
+y = rand(1, nElectrons)*W;
 
 Theta = rand(1, nElectrons)*2*pi;
-Vx = cos(Theta)*Vth;
-Vy = sin(Theta)*Vth;
+Vx = cos(Theta).*(Vth + sigmaMB*randn(1, nElectrons));
+Vy = sin(Theta).*(Vth + sigmaMB*randn(1, nElectrons));
+
+%figure(1)
+%histogram(sqrt(Vx.^2+Vy.^2), 20);
+%hold off
+
+avgV = sum(sqrt(Vx.^2+Vy.^2))/nElectrons
 
 
 
