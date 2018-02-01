@@ -18,23 +18,25 @@ C.am = 1.66053892e-27;
 
 nElectrons = 10;
 T = 300;
-L = 100000;
-W = 100000;
+L = 200e-9;
+W = 100e-9;
 MarkerSize = 1;
-dt = 0.001;
-TStop = 1;
-Vth = sqrt(C.kb*T/(C.m_0*0.26));
+dt = 1e-15;
+TStop = 1e-12;
+Vth = sqrt(2*C.kb*T/(C.m_0*0.26));
 time = 0;
 Temp = T;
 
 InitElectrons;
 
-figure(1)
+cc = jet(nElectrons);
 
+figure(1)
+hold all
 for i=0:dt:TStop
     time = i;
     %PlotAll;
-    PlotElectrons;
+    PlotElectrons(cc);
     
     TempCalc();
     
@@ -54,6 +56,6 @@ for i=0:dt:TStop
              Vy(j) = -Vy(j);
          end
     end
-    pause(0.0001)
+    pause(0.000001)
     
 end
