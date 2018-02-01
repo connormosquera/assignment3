@@ -16,7 +16,7 @@ C.c = 299792458;                    % speed of light
 C.g = 9.80665; %metres (32.1740 ft) per s²
 C.am = 1.66053892e-27;
 
-nElectrons = 10;
+nElectrons = 30;
 T = 300;
 L = 200e-9;
 W = 100e-9;
@@ -38,8 +38,8 @@ figure(1)
 hold all
 for i=0:dt:TStop
     time = i;
-    PlotAll;
-    %PlotElectrons(cc);
+    %PlotAll;
+    PlotElectrons(cc);
     
     TempCalc();
     
