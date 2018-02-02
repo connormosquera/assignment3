@@ -14,7 +14,7 @@ y = rand(1, nElectrons)*W;
 
 for i=1:nElectrons
    while(1) 
-      if ( x(i)<1.2e-7 && x(i)>0.8e-7 && y(i)<0.4e-7 && y(i)>0.6e-7) 
+      if ( x(i)<1.2e-7 && x(i)>0.8e-7 && (y(i)<0.4e-7 || y(i)>0.6e-7)) 
           x(i) = rand*L;
           y(i) = rand*W;
       else

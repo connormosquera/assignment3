@@ -16,7 +16,7 @@ axis([0 L 0 W]);
 %     plot(x(i), y(i), 'o','markers', 1, 'Color', cc(i,:));
 % end
 % 
-% axis([-L/2 L/2 -W/2 W/2]);
+% axis([0 L 0 W]);
 
 
 end

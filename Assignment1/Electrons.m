@@ -27,7 +27,6 @@ Vth = sqrt(2*C.kb*T/(C.m_0*0.26));
 time = 0;
 Temp = T;
 taumn = 0.2e-12;
-Vth = 67431;
 sigmaMB = sqrt(C.kb*T/(C.m_0*0.26));
 
 InitElectrons;
@@ -36,6 +35,16 @@ cc = jet(nElectrons);
 
 figure(1)
 hold all
+plot([0.8,0.8]*1e-7,[0,0.4]*1e-7, 'r-')
+plot([0.8,0.8]*1e-7,[0.6,1]*1e-7, 'r-')
+plot([1.2,1.2]*1e-7,[0,0.4]*1e-7, 'r-')
+plot([1.2,1.2]*1e-7,[0.6,1]*1e-7, 'r-')
+plot([0.8,1.2]*1e-7,[0,0]*1e-7, 'r-')
+plot([0.8,1.2]*1e-7,[0.4,0.4]*1e-7, 'r-')
+plot([0.8,1.2]*1e-7,[0.6,0.6]*1e-7, 'r-')
+plot([0.8,1.2]*1e-7,[1,1]*1e-7, 'r-')
+
+
 for i=0:dt:TStop
     time = i;
     %PlotAll;
@@ -60,13 +69,15 @@ for i=0:dt:TStop
          end
     end
     
-    for j=1:nElectrons
-        if (1-exp(-dt/taumn)) > rand()
-            Theta = rand(1, 1)*2*pi;
-            Vx(j) = cos(Theta)*(Vth + sigmaMB*randn(1, 1));
-            Vy(j) = sin(Theta)*(Vth + sigmaMB*randn(1, 1));
-        end
-    end
+%     for j=1:nElectrons
+%         if (1-exp(-dt/taumn)) > rand()
+%             Theta = rand(1, 1)*2*pi;
+%             Vx(j) = cos(Theta)*(Vth + sigmaMB*randn(1, 1));
+%             Vy(j) = sin(Theta)*(Vth + sigmaMB*randn(1, 1));
+%         end
+%     end
+    
+    BlockBorders();
     
     pause(0.000001)
     
