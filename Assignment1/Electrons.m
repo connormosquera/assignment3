@@ -69,16 +69,17 @@ for i=0:dt:TStop
          end
     end
     
-%     for j=1:nElectrons
-%         if (1-exp(-dt/taumn)) > rand()
-%             Theta = rand(1, 1)*2*pi;
-%             Vx(j) = cos(Theta)*(Vth + sigmaMB*randn(1, 1));
-%             Vy(j) = sin(Theta)*(Vth + sigmaMB*randn(1, 1));
-%         end
-%     end
+    for j=1:nElectrons
+        if (1-exp(-dt/taumn)) > rand()
+            Theta = rand(1, 1)*2*pi;
+            Vx(j) = cos(Theta)*(Vth + sigmaMB*randn(1, 1));
+            Vy(j) = sin(Theta)*(Vth + sigmaMB*randn(1, 1));
+        end
+    end
     
     BlockBorders();
+    %BlockBordersDiffusive();
     
-    pause(0.000001)
+    pause(0.001)
     
 end
