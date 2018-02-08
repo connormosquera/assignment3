@@ -3,7 +3,7 @@ clearvars -GLOBAL
 close all
 
 global nElectrons T L W MarkerSize
-global x y Vx Vy C time Temp dt
+global x y Vx Vy C time Temp dt Vth sigmaMB
 
 C.q_0 = 1.60217653e-19;             % electron charge
 C.hb = 1.054571596e-34;             % Dirac constant
@@ -16,16 +16,18 @@ C.c = 299792458;                    % speed of light
 C.g = 9.80665; %metres (32.1740 ft) per s²
 C.am = 1.66053892e-27;
 
-nElectrons = 10;
+nElectrons = 30;
 T = 300;
 L = 200e-9;
 W = 100e-9;
 MarkerSize = 1;
 dt = 1e-15;
 TStop = 1e-12;
-Vth = sqrt(C.kb*T/(C.m_0*0.26));
+Vth = sqrt(2*C.kb*T/(C.m_0*0.26));
 time = 0;
 Temp = T;
+taumn = 0.2e-12;
+sigmaMB = sqrt(C.kb*T/(C.m_0*0.26));
 
 InitElectrons;
 
@@ -33,10 +35,20 @@ cc = jet(nElectrons);
 
 figure(1)
 hold all
+plot([0.8,0.8]*1e-7,[0,0.4]*1e-7, 'r-')
+plot([0.8,0.8]*1e-7,[0.6,1]*1e-7, 'r-')
+plot([1.2,1.2]*1e-7,[0,0.4]*1e-7, 'r-')
+plot([1.2,1.2]*1e-7,[0.6,1]*1e-7, 'r-')
+plot([0.8,1.2]*1e-7,[0,0]*1e-7, 'r-')
+plot([0.8,1.2]*1e-7,[0.4,0.4]*1e-7, 'r-')
+plot([0.8,1.2]*1e-7,[0.6,0.6]*1e-7, 'r-')
+plot([0.8,1.2]*1e-7,[1,1]*1e-7, 'r-')
+
+
 for i=0:dt:TStop
     time = i;
     %PlotAll;
-    PlotElectrons;
+    PlotElectrons(cc);
     
     TempCalc();
     
@@ -44,18 +56,30 @@ for i=0:dt:TStop
     y = y - dt * Vy;
     
     for j=1:nElectrons
-        if x(j) > L/2
+        if x(j) > L
             x(j) = x(j) - L;
-        elseif x(j) < L/2
+        elseif x(j) < 0
             x(j) = x(j) + L;
         end
         
-         if y(j) > W/2
+         if y(j) > W
              Vy(j) = -Vy(j);
-         elseif y(j) < -W/2
+         elseif y(j) < 0
              Vy(j) = -Vy(j);
          end
     end
-    pause(0.000001)
+    
+    for j=1:nElectrons
+        if (1-exp(-dt/taumn)) > rand()
+            Theta = rand(1, 1)*2*pi;
+            Vx(j) = cos(Theta)*(Vth + sigmaMB*randn(1, 1));
+            Vy(j) = sin(Theta)*(Vth + sigmaMB*randn(1, 1));
+        end
+    end
+    
+    BlockBorders();
+    %BlockBordersDiffusive();
+    
+    pause(0.001)
     
 end

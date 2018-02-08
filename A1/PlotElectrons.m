@@ -4,7 +4,7 @@ global x y Vx Vy
 
 plot(x, y, 'bo', 'markers',MarkerSize,'MarkerFaceColor', 'b');
 %hold on
-axis([-L/2 L/2 -W/2 W/2]);
+axis([0 L 0 W]);
 %xlabel('X');
 %ylabel('Y');
 %title('Electron Position');
@@ -16,7 +16,7 @@ axis([-L/2 L/2 -W/2 W/2]);
 %     plot(x(i), y(i), 'o','markers', 1, 'Color', cc(i,:));
 % end
 % 
-% axis([-L/2 L/2 -W/2 W/2]);
+% axis([0 L 0 W]);
 
 
 end
