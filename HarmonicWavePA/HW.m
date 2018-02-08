@@ -4,7 +4,7 @@ clear all
 
 size=50;
 nx=size;
-ny=size/2;
+ny=size*1.3;
 G=sparse(nx*ny,nx*ny);
 B=zeros(1,nx*ny);
 
@@ -35,16 +35,20 @@ spy(G);
 [E,D] = eigs(G,9,'SM');
 
 
-Emap = zeros(nx,ny)
-for i=1:nx
-    for j=1:ny
-        n = j + (i-1)*ny;
-        Emap(i,j) = E(n,8);
+Emap = zeros(nx,ny,9);
+for h=1:9
+    for i=1:nx
+        for j=1:ny
+            n = j + (i-1)*ny;
+            Emap(i,j,h) = E(n,h);
+        end
     end
 end
 
-figure(1)
-surf(Emap);
+figure('units','normalized','outerposition',[0 0 1 1])
 
-
+for p=1:9
+   subplot(3,3,p)
+   surf(Emap(:,:,p));
+end
 
