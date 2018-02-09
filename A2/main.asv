@@ -1,0 +1,11 @@
+clearvars
+clearvars -GLOBAL
+close all
+
+% global 
+
+C.q_0 = 1.60217653e-19;             % electron charge
+
+L = 100;
+W = 100;
+Vo = 1;

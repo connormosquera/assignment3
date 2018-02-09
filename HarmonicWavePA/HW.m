@@ -4,7 +4,7 @@ clear all
 
 size=50;
 nx=size;
-ny=size*1.3;
+ny=size;
 G=sparse(nx*ny,nx*ny);
 B=zeros(1,nx*ny);
 
