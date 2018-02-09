@@ -23,7 +23,7 @@ Vtemp=V;
 %     V=Vtemp;
 % end
 
-G=sparse(L*W,L*W);
+
 
 for i=1:L
     for j=1:W
