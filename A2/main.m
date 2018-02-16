@@ -11,6 +11,7 @@ W = 100;
 Vo = 1;
 maxI = 20000;
 
+
 V = zeros(L,W);
 V(:,1)=ones(L,1);
 
