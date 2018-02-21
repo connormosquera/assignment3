@@ -35,8 +35,6 @@ for i=1:L
     end
 end
 
-spy(G);
-
 F=G\B';
 
 Vmap = zeros(L,W);
@@ -48,6 +46,9 @@ for i=1:L
     end
 end
 
-
-surf(Vmap);
+figure(1)
+hold on
+imagesc(Vmap);
+colorbar
+axis([0 W 0 L]);
 pause(0.001);

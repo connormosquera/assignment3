@@ -121,7 +121,7 @@ surf(Vmap);
 hold off
 pause(0.001);
 
-[Ex,Ey]=gradient(Vmap);
+[Ex,Ey]=gradient(-Vmap);
 
 figure(3)
 hold on
@@ -133,9 +133,9 @@ pause(0.001);
 Jx=Sigma.*Ex;
 Jy=Sigma.*Ey;
 
-C0 = sum(Jy(1,:));
-CL = sum(Jy(W,:));
-Curr = (C0+CL)*0.5;
+Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
+Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
+Curr = (Cin+Cout)*0.5;
 
 figure(4)
 hold on
