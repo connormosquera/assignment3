@@ -47,58 +47,58 @@ for i=1:W
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
             G(n,n+1) = 1/Sigma(i,j+1);
-            G(n,n+L) = 1/Sigma(i+1,j); 
-        elseif j==L && i==1
+            G(n,n+W) = 1/Sigma(i+1,j); 
+        elseif j==W && i==1
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1));
             G(n,n-1) = 1/Sigma(i,j-1);
-            G(n,n+L) = 1/Sigma(i+1,j);
-        elseif j==1 && i==W
+            G(n,n+W) = 1/Sigma(i+1,j);
+        elseif j==1 && i==L
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j+1));
             G(n,n+1) = 1/Sigma(i,j+1);
-            G(n,n-L) = 1/Sigma(i-1,j); 
-        elseif j==L && i==W
+            G(n,n-W) = 1/Sigma(i-1,j); 
+        elseif j==W && i==L
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j-1));
             G(n,n-1) = 1/Sigma(i,j-1);
-            G(n,n-L) = 1/Sigma(i-1,j);    
+            G(n,n-W) = 1/Sigma(i-1,j);    
         elseif j==1
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + ...
                 1/Sigma(i-1,j));
             G(n,n+1) = 1/Sigma(i,j+1);
-            G(n,n+L) = 1/Sigma(i+1,j); 
-            G(n,n-L) = 1/Sigma(i-1,j);
-        elseif j==L
+            G(n,n+W) = 1/Sigma(i+1,j); 
+            G(n,n-W) = 1/Sigma(i-1,j);
+        elseif j==W
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1) + ...
                 1/Sigma(i-1,j));
             G(n,n-1) = 1/Sigma(i,j-1);
-            G(n,n+L) = 1/Sigma(i+1,j); 
-            G(n,n-L) = 1/Sigma(i-1,j);
+            G(n,n+W) = 1/Sigma(i+1,j); 
+            G(n,n-W) = 1/Sigma(i-1,j);
         elseif i==1
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + ...
                 1/Sigma(i,j-1));
             G(n,n+1) = 1/Sigma(i,j+1);
-            G(n,n+L) = 1/Sigma(i+1,j); 
+            G(n,n+W) = 1/Sigma(i+1,j); 
             G(n,n-1) = 1/Sigma(i,j-1);
-        elseif i==W
+        elseif i==L
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + ...
                 1/Sigma(i-1,j));
             G(n,n-1) = 1/Sigma(i,j-1);
             G(n,n+1) = 1/Sigma(i,j+1); 
-            G(n,n-L) = 1/Sigma(i-1,j);  
+            G(n,n-W) = 1/Sigma(i-1,j);  
         else
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + ...
                 1/Sigma(i-1,j) + 1/Sigma(i+1,j));
             G(n,n-1) = 1/Sigma(i,j-1);
             G(n,n+1) = 1/Sigma(i,j+1); 
-            G(n,n-L) = 1/Sigma(i-1,j); 
-            G(n,n+L) = 1/Sigma(i+1,j); 
+            G(n,n-W) = 1/Sigma(i-1,j); 
+            G(n,n+W) = 1/Sigma(i+1,j); 
         end
         
     end
@@ -106,11 +106,11 @@ end
 
 F=G\B';
 
-Vmap = zeros(W,L);
+Vmap = zeros(L,W);
 
-for i=1:W
-    for j=1:L
-        n = j + (i-1)*L;
+for i=1:L
+    for j=1:W
+        n = j + (i-1)*W;
         Vmap(i,j) = F(n);
     end
 end
@@ -141,6 +141,5 @@ figure(4)
 hold on
 quiver(Jx,Jy);
 axis([0 L 0 W])
-% axis([0 W 0 L])
 hold off
 pause(0.001);
