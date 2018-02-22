@@ -6,7 +6,6 @@ Wbvec = [10 20 25 30 35 40 45 47 50 53 55 56 57 58];
 steps=length(Wbvec);
 Curr = zeros(1,steps);
 
-
 for h=1:steps
 
     L = 80;
@@ -124,8 +123,12 @@ for h=1:steps
     Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
     Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
     Curr(h) = (Cin+Cout)*0.5;
-    h
 end
 
 figure(1)
+hold on
 plot(Wbvec, Curr);
+title('Wb (with W=120) vs. Current Density')
+xlabel('Wb')
+ylabel('Current Density')
+hold off

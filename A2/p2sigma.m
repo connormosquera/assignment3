@@ -6,7 +6,6 @@ SigVec = [50 20 10 2 1 0.1 0.01 0.001 0.0001];
 steps=length(SigVec);
 Curr = zeros(1,steps);
 
-
 for h=1:steps
 
     L = 80;
@@ -132,3 +131,7 @@ hold on
 plot(SigVec, Curr);
 set(gca, 'XScale', 'log')
 set(gca, 'YScale', 'log')
+title('Conductivity vs. Current Density')
+xlabel('Conductivity')
+ylabel('Current Density')
+hold off

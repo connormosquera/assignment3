@@ -2,14 +2,13 @@ clearvars
 clearvars -GLOBAL
 close all
 
-Lvec = [20 30 40 50 60 80 100 120 140 160];
-steps=length(Lvec);
+SigVec = [50 20 10 2 1 0.1 0.01 0.001 0.0001];
+steps=length(SigVec);
 Curr = zeros(1,steps);
-
 
 for h=1:steps
 
-    L = Lvec(h);
+    L = 80;
     W = 3/2*L;
     Lb = round(L/3);
     Wb = round(W/3);
@@ -17,7 +16,7 @@ for h=1:steps
     maxI = 200;
     delta = 1;
     
-    Sigma = ones(W,L);
+    Sigma = ones(W,L)*SigVec(h);
     
     for i=1:Wb
         for j=round(L/2-Lb/2):round(L/2+Lb/2)
@@ -124,12 +123,15 @@ for h=1:steps
     Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
     Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
     Curr(h) = (Cin+Cout)*0.5;
+    h
 end
 
 figure(1)
 hold on
-plot(Lvec, Curr);
+plot(SigVec, Curr);
+set(gca, 'XScale', 'log')
+set(gca, 'YScale', 'log')
 title('Number of Cells Along Length vs. Current Density')
 xlabel('Cells Along Length')
 ylabel('Current Density')
-hold off
+
