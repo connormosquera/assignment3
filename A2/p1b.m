@@ -46,9 +46,8 @@ for i=1:L
     end
 end
 
-figure(1)
-hold on
-imagesc(Vmap);
-colorbar
-axis([0 W 0 L]);
+%figure(1)
+%hold on
+surf(Vmap);
+%axis([0 W 0 L]);
 pause(0.001);

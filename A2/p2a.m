@@ -26,6 +26,7 @@ end
 figure(1)
 hold on
 surf(Sigma);
+title('Conductivity Mapgit')
 axis([0 L 0 W])
 hold off
 
@@ -118,6 +119,7 @@ end
 figure(2)
 hold on
 surf(Vmap);
+title('Voltage Distribution')
 hold off
 pause(0.001);
 
@@ -127,6 +129,7 @@ figure(3)
 hold on
 quiver(Ex,Ey);
 axis([0 L 0 W])
+title('Electric Field (V/m)')
 hold off
 pause(0.001);
 
@@ -141,6 +144,6 @@ figure(4)
 hold on
 quiver(Jx,Jy);
 axis([0 L 0 W])
-% axis([0 W 0 L])
+title('Current Density (A/m^2)')
 hold off
 pause(0.001);
