@@ -112,9 +112,5 @@ title('Electric Field (V/m)')
 hold off
 pause(0.001);
 
-Jx=Sigma.*Ex;
-Jy=Sigma.*Ey;
-
-Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
-Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
-Curr = (Cin+Cout)*0.5;
+Ex=Ex';
+Ey=Ey';
