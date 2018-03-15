@@ -19,7 +19,7 @@ cc = jet(nPlot); % colorscale used to plot different electron colors
 delVx = 0.8; % voltage difference in x direction
 delVy = 0;
 
-Ex = delVx/L
+Ex = delVx/L;
 Ey = delVy/W;
 
 collisionT = zeros(200,nElectrons); % matrices for tracking collision time and velocities
