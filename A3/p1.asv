@@ -37,18 +37,14 @@ Vy = sin(Theta).*(Vth + sigmaMB*randn(1, nElectrons));
 avgV = sum(sqrt(Vx.^2+Vy.^2))/nElectrons % calculation of initial average velocity
 
 currentD = zeros(1,1000);
-currentDTime = linspace(1,1000,1000);
 
 figure(2)
 hFig2 = figure(2);
 % set(hFig2, 'Position', [500 0 600 1000])
 set(hFig2, 'Position', [0 0 1200 1000])
 
-q=0;
-
 for i=0:dt:TStop
     time = i;
-    q=q+1;
 
 %     subplot(2,1,1); % plotting electron positions
     hold on
@@ -104,17 +100,13 @@ for i=0:dt:TStop
         end
     end
     
-    currentD(q) = 10^15*C.q_0*mean(Vx);
+    currentD(i+1) = 10^15*C.q_0*mean(Vx);
     
     pause(0.000001)
     
 end
 
-figure(1) % plotting current density vs time
-hold on
-plot(currentDTime(1:1000), currentD(1:1000))
-title('Current Density vs. Time');
-hold off
+
 
 MFP=0;
 TBC=0;
