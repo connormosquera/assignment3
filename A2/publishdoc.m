@@ -118,7 +118,7 @@ end
 surf(Vmap);
 pause(0.001);
 
-%% 1b - 2D Electrostatic Potential (Analytic Method)
+%% 1c - 2D Electrostatic Potential (Analytic Method)
 % Below is the same potential system as before, but solved using the 
 % analytic solution provided by the lab document. 
 
@@ -143,7 +143,7 @@ for k=1:Terms
     pause(0.05);
 end
 
-%% 1b - Discussion
+%% 1d - Discussion
 % 60 terms were used for the analytic series solution method, as it was
 % determined that using larger values of the index n resulted in an
 % inf/inf calculation, resulting in a NaN output from Matlab. Both the
@@ -192,7 +192,8 @@ end
 figure(1)
 hold on
 surf(Sigma);
-title('Conductivity Mapgit')
+title('Conductivity Map')
+colorbar
 axis([0 L 0 W])
 hold off
 
@@ -286,6 +287,7 @@ figure(2)
 hold on
 surf(Vmap);
 title('Voltage Distribution')
+colorbar
 hold off
 pause(0.001);
 

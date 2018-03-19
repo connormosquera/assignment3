@@ -27,6 +27,7 @@ figure(1)
 hold on
 surf(Sigma);
 title('Conductivity Mapgit')
+colorbar
 axis([0 L 0 W])
 hold off
 
@@ -120,6 +121,7 @@ figure(2)
 hold on
 surf(Vmap);
 title('Voltage Distribution')
+colorbar
 hold off
 pause(0.001);
 

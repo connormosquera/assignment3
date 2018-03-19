@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>ELEC 4700 Assignment 2 - Finite Difference Method</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-21"><meta name="DC.source" content="publishdoc.m"><style type="text/css">
+      --><title>ELEC 4700 Assignment 2 - Finite Difference Method</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-22"><meta name="DC.source" content="publishdoc.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>ELEC 4700 Assignment 2 - Finite Difference Method</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">1a - 1D Electrostatic Potential</a></li><li><a href="#2">1b - 2D Electrostatic Potential (Finite Difference Method)</a></li><li><a href="#3">1b - 2D Electrostatic Potential (Analytic Method)</a></li><li><a href="#4">1b - Discussion</a></li><li><a href="#5">2 - Non-Uniform Conductivity Map</a></li></ul></div><h2 id="1">1a - 1D Electrostatic Potential</h2><p>Below is a solution to the 2D potential, but represented as a 3D surface with a constant potential in the y direction. One side of the rectangle is held at a potential of 1, the other side is held at 0, and dV/dy is set to 0 for the other two sides to allow for the flat 1D-like potential.</p><pre class="codeinput">clearvars
+  </style></head><body><div class="content"><h1>ELEC 4700 Assignment 2 - Finite Difference Method</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">1a - 1D Electrostatic Potential</a></li><li><a href="#2">1b - 2D Electrostatic Potential (Finite Difference Method)</a></li><li><a href="#3">1c - 2D Electrostatic Potential (Analytic Method)</a></li><li><a href="#4">1d - Discussion</a></li><li><a href="#5">2a - Non-Uniform Conductivity Map</a></li><li><a href="#6">2b - Investigating Mesh Density</a></li><li><a href="#7">2c - Investigating Bottle-Neck Distance</a></li><li><a href="#8">2d - Investigating Resistivity</a></li><li><a href="#9">2e - Discussion</a></li></ul></div><h2>1a - 1D Electrostatic Potential<a name="1"></a></h2><p>Below is a solution to the 2D potential, but represented as a 3D surface with a constant potential in the y direction. One side of the rectangle is held at a potential of 1, the other side is held at 0, and dV/dy is set to 0 for the other two sides to allow for the flat 1D-like potential.</p><pre class="codeinput">clearvars
 clearvars <span class="string">-GLOBAL</span>
 close <span class="string">all</span>
 
@@ -79,7 +79,7 @@ B = zeros(1,L*W);
 
 <span class="keyword">for</span> i=1:L
     <span class="keyword">for</span> j=1:W
-        n = j + (i-1)*W;
+        n = j + (i-1)*W; <span class="comment">% indexing for G matrix</span>
 
         <span class="keyword">if</span> i==L
             G(n,:) = 0;
@@ -91,11 +91,11 @@ B = zeros(1,L*W);
         <span class="keyword">elseif</span> j==1
             G(n,:) = 0;
             G(n,n) = -1;
-            G(n,n+1) = 1;     <span class="comment">% dV/dy = 0</span>
+            G(n,n+1) = 1;     <span class="comment">% dV/dy = 0 on one side of box</span>
         <span class="keyword">elseif</span> j==W
             G(n,:) = 0;
             G(n,n) = -1;
-            G(n,n-1) = 1;     <span class="comment">% dV/dy = 0</span>
+            G(n,n-1) = 1;     <span class="comment">% dV/dy = 0 on other side of box</span>
         <span class="keyword">else</span>
             G(n,:) = 0;
             G(n,n) = -4;
@@ -108,23 +108,20 @@ B = zeros(1,L*W);
     <span class="keyword">end</span>
 <span class="keyword">end</span>
 
-spy(G);
-
 F=G\B';
 
 Vmap = zeros(L,W);
 
-<span class="keyword">for</span> i=1:L
+<span class="keyword">for</span> i=1:L <span class="comment">% remapping solution to 2D matrix</span>
     <span class="keyword">for</span> j=1:W
         n = j + (i-1)*W;
         Vmap(i,j) = F(n);
     <span class="keyword">end</span>
 <span class="keyword">end</span>
 
-
 surf(Vmap);
 pause(0.001);
-</pre><img vspace="5" hspace="5" src="publishdoc_01.png" alt=""> <h2 id="2">1b - 2D Electrostatic Potential (Finite Difference Method)</h2><p>Below is the solution to the potential system where instead of having dV/dy = 0 for the last two sides, they are instead fixed at 0.</p><pre class="codeinput">clearvars
+</pre><img vspace="5" hspace="5" src="publishdoc_01.png" alt=""> <h2>1b - 2D Electrostatic Potential (Finite Difference Method)<a name="2"></a></h2><p>Below is the solution to the potential system where instead of having dV/dy=0 for the last two sides, they are fixed at V=0.</p><pre class="codeinput">clearvars
 clearvars <span class="string">-GLOBAL</span>
 close <span class="string">all</span>
 
@@ -174,7 +171,7 @@ Vmap = zeros(L,W);
 
 surf(Vmap);
 pause(0.001);
-</pre><img vspace="5" hspace="5" src="publishdoc_02.png" alt=""> <h2 id="3">1b - 2D Electrostatic Potential (Analytic Method)</h2><p>Below is the same potential system as before, but solved using the analytic solution provided by the lab document.</p><pre class="codeinput">clearvars
+</pre><img vspace="5" hspace="5" src="publishdoc_02.png" alt=""> <h2>1c - 2D Electrostatic Potential (Analytic Method)<a name="3"></a></h2><p>Below is the same potential system as before, but solved using the analytic solution provided by the lab document.</p><pre class="codeinput">clearvars
 clearvars <span class="string">-GLOBAL</span>
 close <span class="string">all</span>
 
@@ -194,7 +191,7 @@ V = zeros(L+1,W);
     surf(V);
     pause(0.05);
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="publishdoc_03.png" alt=""> <h2 id="4">1b - Discussion</h2><p>60 terms were used for the analytic series solution method, as it was determined that using larger values of the index n resulted in an inf/inf calculation, resulting in a NaN output from Matlab. Both the analytic and finite difference methods produced approximately the same potential distributions. One of the downsides of the finite difference method is the rough edges on the corners of the map, which the analytic method seemed not to have. However, the analytic method experiences the Gibbs phenomenon due to the termination of the series solution, resulting in overshoots of the solution at the map boundaries.</p><h2 id="5">2 - Non-Uniform Conductivity Map</h2><pre class="codeinput">clearvars
+</pre><img vspace="5" hspace="5" src="publishdoc_03.png" alt=""> <h2>1d - Discussion<a name="4"></a></h2><p>60 terms were used for the analytic series solution method, as it was determined that using larger values of the index n resulted in an inf/inf calculation, resulting in a NaN output from Matlab. Both the analytic and finite difference methods produced approximately the same potential distributions. One of the downsides of the finite difference method is the rough edges on the corners of the map, which the analytic method seemed not to have. However, the analytic method experiences the Gibbs phenomenon due to the termination of the series solution, resulting in overshoots of the solution at the map boundaries.</p><h2>2a - Non-Uniform Conductivity Map<a name="5"></a></h2><p>Below is the solution to the non-uniform conductivity map potential. Plots for this code include the conductivity map defined by the lab document, voltage map determined by the solution of Laplace's equation, the electric fields determined from the negative of the gradient of the potential map, and the current density map calculated by multiplying the electric field map by the current densities corresponding to each cell.</p><pre class="codeinput">clearvars
 clearvars <span class="string">-GLOBAL</span>
 close <span class="string">all</span>
 
@@ -208,7 +205,7 @@ delta = 1;
 
 Sigma = ones(W,L);
 
-<span class="keyword">for</span> i=1:Wb
+<span class="keyword">for</span> i=1:Wb <span class="comment">% defining high resistivity portions of map in terms of Wb and Lb</span>
     <span class="keyword">for</span> j=round(L/2-Lb/2):round(L/2+Lb/2)
         Sigma(i,j) = 0.01;
     <span class="keyword">end</span>
@@ -222,6 +219,8 @@ Sigma = ones(W,L);
 figure(1)
 hold <span class="string">on</span>
 surf(Sigma);
+title(<span class="string">'Conductivity Map'</span>)
+colorbar
 axis([0 L 0 W])
 hold <span class="string">off</span>
 
@@ -239,7 +238,7 @@ B = zeros(1,L*W);
         <span class="keyword">elseif</span> i==W &amp;&amp; j==L/2
             G(n,:) = 0;
             G(n,n) = 1;
-        <span class="keyword">elseif</span> j==1 &amp;&amp; i==1
+        <span class="keyword">elseif</span> j==1 &amp;&amp; i==1 <span class="comment">% solving Laplace using resistor method</span>
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
             G(n,n+1) = 1/Sigma(i,j+1);
@@ -314,15 +313,18 @@ Vmap = zeros(W,L);
 figure(2)
 hold <span class="string">on</span>
 surf(Vmap);
+title(<span class="string">'Voltage Distribution'</span>)
+colorbar
 hold <span class="string">off</span>
 pause(0.001);
 
-[Ex,Ey]=gradient(-Vmap);
+[Ex,Ey]=gradient(-Vmap); <span class="comment">% Ex=-dV/dx, Ey=-dV/dy</span>
 
 figure(3)
 hold <span class="string">on</span>
 quiver(Ex,Ey);
 axis([0 L 0 W])
+title(<span class="string">'Electric Field'</span>)
 hold <span class="string">off</span>
 pause(0.001);
 
@@ -331,16 +333,421 @@ Jy=Sigma.*Ey;
 
 Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
 Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
-Curr = (Cin+Cout)*0.5;
+Curr = (Cin+Cout)*0.5; <span class="comment">% average current through isolated cells</span>
 
 figure(4)
 hold <span class="string">on</span>
 quiver(Jx,Jy);
 axis([0 L 0 W])
-<span class="comment">% axis([0 W 0 L])</span>
+title(<span class="string">'Current Density'</span>)
 hold <span class="string">off</span>
 pause(0.001);
-</pre><img vspace="5" hspace="5" src="publishdoc_04.png" alt=""> <img vspace="5" hspace="5" src="publishdoc_05.png" alt=""> <img vspace="5" hspace="5" src="publishdoc_06.png" alt=""> <img vspace="5" hspace="5" src="publishdoc_07.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="publishdoc_04.png" alt=""> <img vspace="5" hspace="5" src="publishdoc_05.png" alt=""> <img vspace="5" hspace="5" src="publishdoc_06.png" alt=""> <img vspace="5" hspace="5" src="publishdoc_07.png" alt=""> <h2>2b - Investigating Mesh Density<a name="6"></a></h2><p>Below is the same code as above, but run in a loop to parameterize the number of cells along the length and width of the box. At the end a plot is produced that shows the change in current density through the isolated points in the mesh as the mesh density is varied.</p><pre class="codeinput">clearvars
+clearvars <span class="string">-GLOBAL</span>
+close <span class="string">all</span>
+
+Lvec = [20 30 40 50 60 80 100 120 140 160]; <span class="comment">% various mesh lengths</span>
+steps=length(Lvec);
+Curr = zeros(1,steps);
+
+
+<span class="keyword">for</span> h=1:steps
+
+    L = Lvec(h);
+    W = 3/2*L;
+    Lb = round(L/3);
+    Wb = round(W/3);
+    Vo = 1;
+    maxI = 200;
+    delta = 1;
+
+    Sigma = ones(W,L);
+
+    <span class="keyword">for</span> i=1:Wb
+        <span class="keyword">for</span> j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> i=round(W-Wb):W
+        <span class="keyword">for</span> j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    G = sparse(L*W,L*W);
+    B = zeros(1,L*W);
+
+    <span class="keyword">for</span> i=1:W
+        <span class="keyword">for</span> j=1:L
+            n = j + (i-1)*L;
+
+            <span class="keyword">if</span> i==1 &amp;&amp; j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+                B(n) = Vo;
+            <span class="keyword">elseif</span> i==W &amp;&amp; j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+            <span class="keyword">elseif</span> j==1 &amp;&amp; i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">elseif</span> j==L &amp;&amp; i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">elseif</span> j==1 &amp;&amp; i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==L &amp;&amp; i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==L
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + <span class="keyword">...</span>
+                    1/Sigma(i,j-1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-1) = 1/Sigma(i,j-1);
+            <span class="keyword">elseif</span> i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">else</span>
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j) + 1/Sigma(i+1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">end</span>
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    F=G\B';
+
+    Vmap = zeros(W,L);
+
+    <span class="keyword">for</span> i=1:W
+        <span class="keyword">for</span> j=1:L
+            n = j + (i-1)*L;
+            Vmap(i,j) = F(n);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    [Ex,Ey]=gradient(-Vmap);
+
+    Jx=Sigma.*Ex;
+    Jy=Sigma.*Ey;
+
+    Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
+    Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
+    Curr(h) = (Cin+Cout)*0.5;
+<span class="keyword">end</span>
+
+figure(1)
+hold <span class="string">on</span>
+plot(Lvec, Curr);
+title(<span class="string">'Number of Cells Along Length vs. Current Density'</span>)
+xlabel(<span class="string">'Cells Along Length'</span>)
+ylabel(<span class="string">'Current Density'</span>)
+hold <span class="string">off</span>
+</pre><img vspace="5" hspace="5" src="publishdoc_08.png" alt=""> <h2>2c - Investigating Bottle-Neck Distance<a name="7"></a></h2><p>Similarly to before, the bottle-neck distance (Wb) is varied to observe the effects on the current density.</p><pre class="codeinput">clearvars
+clearvars <span class="string">-GLOBAL</span>
+close <span class="string">all</span>
+
+Wbvec = [10 20 25 30 35 40 45 47 50 53 55 56 57 58]; <span class="comment">% various Wb lengths</span>
+steps=length(Wbvec);
+Curr = zeros(1,steps);
+
+<span class="keyword">for</span> h=1:steps
+
+    L = 80;
+    W = 3/2*L;
+    Lb = round(L/3);
+    Wb = Wbvec(h);
+    Vo = 1;
+    maxI = 200;
+    delta = 1;
+
+    Sigma = ones(W,L);
+
+    <span class="keyword">for</span> i=1:Wb
+        <span class="keyword">for</span> j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> i=round(W-Wb):W
+        <span class="keyword">for</span> j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    G = sparse(L*W,L*W);
+    B = zeros(1,L*W);
+
+    <span class="keyword">for</span> i=1:W
+        <span class="keyword">for</span> j=1:L
+            n = j + (i-1)*L;
+
+            <span class="keyword">if</span> i==1 &amp;&amp; j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+                B(n) = Vo;
+            <span class="keyword">elseif</span> i==W &amp;&amp; j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+            <span class="keyword">elseif</span> j==1 &amp;&amp; i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">elseif</span> j==L &amp;&amp; i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">elseif</span> j==1 &amp;&amp; i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==L &amp;&amp; i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==L
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + <span class="keyword">...</span>
+                    1/Sigma(i,j-1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-1) = 1/Sigma(i,j-1);
+            <span class="keyword">elseif</span> i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">else</span>
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j) + 1/Sigma(i+1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">end</span>
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    F=G\B';
+
+    Vmap = zeros(W,L);
+
+    <span class="keyword">for</span> i=1:W
+        <span class="keyword">for</span> j=1:L
+            n = j + (i-1)*L;
+            Vmap(i,j) = F(n);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    [Ex,Ey]=gradient(-Vmap);
+
+    Jx=Sigma.*Ex;
+    Jy=Sigma.*Ey;
+
+    Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
+    Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
+    Curr(h) = (Cin+Cout)*0.5;
+<span class="keyword">end</span>
+
+figure(1)
+hold <span class="string">on</span>
+plot(Wbvec, Curr);
+title(<span class="string">'Wb (with W=120) vs. Current Density'</span>)
+xlabel(<span class="string">'Wb'</span>)
+ylabel(<span class="string">'Current Density'</span>)
+hold <span class="string">off</span>
+</pre><img vspace="5" hspace="5" src="publishdoc_09.png" alt=""> <h2>2d - Investigating Resistivity<a name="8"></a></h2><p>In this section, the conductivity of the larger portion of the box (everywhere but the two rectangles) is altered and compared to the current density.</p><pre class="codeinput">clearvars
+clearvars <span class="string">-GLOBAL</span>
+close <span class="string">all</span>
+
+SigVec = [50 20 10 2 1 0.1 0.01 0.001 0.0001]; <span class="comment">% various conductivities</span>
+steps=length(SigVec);
+Curr = zeros(1,steps);
+
+<span class="keyword">for</span> h=1:steps
+
+    L = 80;
+    W = 3/2*L;
+    Lb = round(L/3);
+    Wb = round(W/3);
+    Vo = 1;
+    maxI = 200;
+    delta = 1;
+
+    Sigma = ones(W,L)*SigVec(h);
+
+    <span class="keyword">for</span> i=1:Wb
+        <span class="keyword">for</span> j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> i=round(W-Wb):W
+        <span class="keyword">for</span> j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    G = sparse(L*W,L*W);
+    B = zeros(1,L*W);
+
+    <span class="keyword">for</span> i=1:W
+        <span class="keyword">for</span> j=1:L
+            n = j + (i-1)*L;
+
+            <span class="keyword">if</span> i==1 &amp;&amp; j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+                B(n) = Vo;
+            <span class="keyword">elseif</span> i==W &amp;&amp; j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+            <span class="keyword">elseif</span> j==1 &amp;&amp; i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">elseif</span> j==L &amp;&amp; i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">elseif</span> j==1 &amp;&amp; i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==L &amp;&amp; i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> j==L
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">elseif</span> i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + <span class="keyword">...</span>
+                    1/Sigma(i,j-1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-1) = 1/Sigma(i,j-1);
+            <span class="keyword">elseif</span> i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            <span class="keyword">else</span>
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + <span class="keyword">...</span>
+                    1/Sigma(i-1,j) + 1/Sigma(i+1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            <span class="keyword">end</span>
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    F=G\B';
+
+    Vmap = zeros(W,L);
+
+    <span class="keyword">for</span> i=1:W
+        <span class="keyword">for</span> j=1:L
+            n = j + (i-1)*L;
+            Vmap(i,j) = F(n);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    [Ex,Ey]=gradient(-Vmap);
+
+    Jx=Sigma.*Ex;
+    Jy=Sigma.*Ey;
+
+    Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
+    Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
+    Curr(h) = (Cin+Cout)*0.5;
+<span class="keyword">end</span>
+
+figure(1)
+hold <span class="string">on</span>
+plot(SigVec, Curr);
+set(gca, <span class="string">'XScale'</span>, <span class="string">'log'</span>)
+set(gca, <span class="string">'YScale'</span>, <span class="string">'log'</span>)
+title(<span class="string">'Conductivity vs. Current Density'</span>)
+xlabel(<span class="string">'Conductivity'</span>)
+ylabel(<span class="string">'Current Density'</span>)
+hold <span class="string">off</span>
+</pre><img vspace="5" hspace="5" src="publishdoc_10.png" alt=""> <h2>2e - Discussion<a name="9"></a></h2><p>As seen by the figure in section 2b, varying the mesh density caused the current density to decrease in what appeared to be an asymptotic fashion. This may mean that the simulation over estimates the current density for low mesh densities. It would have been beneficial to simulated a few larger mesh densities, but the time required to simulated even the largest mesh densities done here was quite large.</p><p>As shown in the figure in section 2c, the current density increased exponentially. Since the width of the box was 120, as Wb approaches 60 the two insulating rectangles come close to making contact and shortening the channel that the current has to traverse. Wb =59 and Wb=60 were excluded from the plot as it obscured the data for the lower values, but they continued along the same exponential trend.</p><p>In the figure for section 2d both the x and y axes are plotted logarithmically to preserve the information present in the slides. For these simulations the conductivity of the rectangles were kept at 1e-2. As shown, for low conductivities the current density saturates, but as the conductivity increases the current density drops drastically. This makes some sense, as when the box has a conductivity of 1e-4 and the rectangles have a conductivity of 1e-2, the rectangles are more conducting than the rest of the box, but when the conductivity of the box increases to 1e2 it becomes more conducting than the rectangles.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% ELEC 4700 Assignment 2 - Finite Difference Method
 %% 1a - 1D Electrostatic Potential
@@ -364,7 +771,7 @@ B = zeros(1,L*W);
 
 for i=1:L
     for j=1:W
-        n = j + (i-1)*W;
+        n = j + (i-1)*W; % indexing for G matrix
         
         if i==L 
             G(n,:) = 0;
@@ -376,11 +783,11 @@ for i=1:L
         elseif j==1
             G(n,:) = 0;
             G(n,n) = -1;
-            G(n,n+1) = 1;     % dV/dy = 0      
+            G(n,n+1) = 1;     % dV/dy = 0 on one side of box    
         elseif j==W
             G(n,:) = 0;
             G(n,n) = -1; 
-            G(n,n-1) = 1;     % dV/dy = 0    
+            G(n,n-1) = 1;     % dV/dy = 0 on other side of box   
         else
             G(n,:) = 0;
             G(n,n) = -4;
@@ -393,26 +800,23 @@ for i=1:L
     end
 end
 
-spy(G);
-
 F=G\B';
 
 Vmap = zeros(L,W);
 
-for i=1:L
+for i=1:L % remapping solution to 2D matrix
     for j=1:W
         n = j + (i-1)*W;
         Vmap(i,j) = F(n);
     end
 end
 
-
 surf(Vmap);
 pause(0.001);
 
 %% 1b - 2D Electrostatic Potential (Finite Difference Method)
 % Below is the solution to the potential system where instead of 
-% having dV/dy = 0 for the last two sides, they are instead fixed at 0.
+% having dV/dy=0 for the last two sides, they are fixed at V=0.
 
 clearvars
 clearvars -GLOBAL
@@ -465,7 +869,7 @@ end
 surf(Vmap);
 pause(0.001);
 
-%% 1b - 2D Electrostatic Potential (Analytic Method)
+%% 1c - 2D Electrostatic Potential (Analytic Method)
 % Below is the same potential system as before, but solved using the 
 % analytic solution provided by the lab document. 
 
@@ -490,7 +894,7 @@ for k=1:Terms
     pause(0.05);
 end
 
-%% 1b - Discussion
+%% 1d - Discussion
 % 60 terms were used for the analytic series solution method, as it was
 % determined that using larger values of the index n resulted in an
 % inf/inf calculation, resulting in a NaN output from Matlab. Both the
@@ -501,13 +905,14 @@ end
 % Gibbs phenomenon due to the termination of the series solution, resulting
 % in overshoots of the solution at the map boundaries.
 %
-%
 
-
-
-%% 2 - Non-Uniform Conductivity Map
-%
-%
+%% 2a - Non-Uniform Conductivity Map
+% Below is the solution to the non-uniform conductivity map potential.
+% Plots for this code include the conductivity map defined by the lab
+% document, voltage map determined by the solution of Laplace's equation,
+% the electric fields determined from the negative of the gradient of the
+% potential map, and the current density map calculated by multiplying the
+% electric field map by the current densities corresponding to each cell.
 %
 
 clearvars
@@ -524,7 +929,7 @@ delta = 1;
 
 Sigma = ones(W,L);
 
-for i=1:Wb
+for i=1:Wb % defining high resistivity portions of map in terms of Wb and Lb
     for j=round(L/2-Lb/2):round(L/2+Lb/2)
         Sigma(i,j) = 0.01;
     end
@@ -538,6 +943,8 @@ end
 figure(1)
 hold on
 surf(Sigma);
+title('Conductivity Map')
+colorbar
 axis([0 L 0 W])
 hold off
 
@@ -555,7 +962,7 @@ for i=1:W
         elseif i==W && j==L/2
             G(n,:) = 0;
             G(n,n) = 1;
-        elseif j==1 && i==1
+        elseif j==1 && i==1 % solving Laplace using resistor method
             G(n,:) = 0;
             G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
             G(n,n+1) = 1/Sigma(i,j+1);
@@ -630,15 +1037,18 @@ end
 figure(2)
 hold on
 surf(Vmap);
+title('Voltage Distribution')
+colorbar
 hold off
 pause(0.001);
 
-[Ex,Ey]=gradient(-Vmap);
+[Ex,Ey]=gradient(-Vmap); % Ex=-dV/dx, Ey=-dV/dy
 
 figure(3)
 hold on
 quiver(Ex,Ey);
 axis([0 L 0 W])
+title('Electric Field')
 hold off
 pause(0.001);
 
@@ -647,19 +1057,467 @@ Jy=Sigma.*Ey;
 
 Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
 Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
-Curr = (Cin+Cout)*0.5;
+Curr = (Cin+Cout)*0.5; % average current through isolated cells
 
 figure(4)
 hold on
 quiver(Jx,Jy);
 axis([0 L 0 W])
-% axis([0 W 0 L])
+title('Current Density')
 hold off
 pause(0.001);
 
+%% 2b - Investigating Mesh Density
+% Below is the same code as above, but run in a loop to parameterize the
+% number of cells along the length and width of the box. At the end a plot
+% is produced that shows the change in current density through the isolated
+% points in the mesh as the mesh density is varied.
+%
+
+clearvars
+clearvars -GLOBAL
+close all
+
+Lvec = [20 30 40 50 60 80 100 120 140 160]; % various mesh lengths
+steps=length(Lvec);
+Curr = zeros(1,steps);
 
 
+for h=1:steps
 
+    L = Lvec(h);
+    W = 3/2*L;
+    Lb = round(L/3);
+    Wb = round(W/3);
+    Vo = 1;
+    maxI = 200;
+    delta = 1;
+    
+    Sigma = ones(W,L);
+    
+    for i=1:Wb
+        for j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        end
+    end
+    for i=round(W-Wb):W
+        for j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        end
+    end
+    
+    G = sparse(L*W,L*W);
+    B = zeros(1,L*W);
+    
+    for i=1:W
+        for j=1:L
+            n = j + (i-1)*L;
+            
+            if i==1 && j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+                B(n) = Vo;
+            elseif i==W && j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+            elseif j==1 && i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            elseif j==L && i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            elseif j==1 && i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==L && i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==L
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + ...
+                    1/Sigma(i,j-1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-1) = 1/Sigma(i,j-1);
+            elseif i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            else
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j) + 1/Sigma(i+1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            end
+            
+        end
+    end
+    
+    F=G\B';
+    
+    Vmap = zeros(W,L);
+    
+    for i=1:W
+        for j=1:L
+            n = j + (i-1)*L;
+            Vmap(i,j) = F(n);
+        end
+    end
+    
+    [Ex,Ey]=gradient(-Vmap);
+    
+    Jx=Sigma.*Ex;
+    Jy=Sigma.*Ey;
+    
+    Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
+    Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
+    Curr(h) = (Cin+Cout)*0.5;
+end
+
+figure(1)
+hold on
+plot(Lvec, Curr);
+title('Number of Cells Along Length vs. Current Density')
+xlabel('Cells Along Length')
+ylabel('Current Density')
+hold off
+
+%% 2c - Investigating Bottle-Neck Distance
+% Similarly to before, the bottle-neck distance (Wb) is varied to observe
+% the effects on the current density.
+%
+
+clearvars
+clearvars -GLOBAL
+close all
+
+Wbvec = [10 20 25 30 35 40 45 47 50 53 55 56 57 58]; % various Wb lengths
+steps=length(Wbvec);
+Curr = zeros(1,steps);
+
+for h=1:steps
+
+    L = 80;
+    W = 3/2*L;
+    Lb = round(L/3);
+    Wb = Wbvec(h);
+    Vo = 1;
+    maxI = 200;
+    delta = 1;
+    
+    Sigma = ones(W,L);
+    
+    for i=1:Wb
+        for j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        end
+    end
+    for i=round(W-Wb):W
+        for j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        end
+    end
+    
+    G = sparse(L*W,L*W);
+    B = zeros(1,L*W);
+    
+    for i=1:W
+        for j=1:L
+            n = j + (i-1)*L;
+            
+            if i==1 && j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+                B(n) = Vo;
+            elseif i==W && j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+            elseif j==1 && i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            elseif j==L && i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            elseif j==1 && i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==L && i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==L
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + ...
+                    1/Sigma(i,j-1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-1) = 1/Sigma(i,j-1);
+            elseif i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            else
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j) + 1/Sigma(i+1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            end
+            
+        end
+    end
+    
+    F=G\B';
+    
+    Vmap = zeros(W,L);
+    
+    for i=1:W
+        for j=1:L
+            n = j + (i-1)*L;
+            Vmap(i,j) = F(n);
+        end
+    end
+    
+    [Ex,Ey]=gradient(-Vmap);
+    
+    Jx=Sigma.*Ex;
+    Jy=Sigma.*Ey;
+    
+    Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
+    Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
+    Curr(h) = (Cin+Cout)*0.5;
+end
+
+figure(1)
+hold on
+plot(Wbvec, Curr);
+title('Wb (with W=120) vs. Current Density')
+xlabel('Wb')
+ylabel('Current Density')
+hold off
+
+%% 2d - Investigating Resistivity
+% In this section, the conductivity of the larger portion of the box
+% (everywhere but the two rectangles) is altered and compared to the
+% current density. 
+%
+
+clearvars
+clearvars -GLOBAL
+close all
+
+SigVec = [50 20 10 2 1 0.1 0.01 0.001 0.0001]; % various conductivities
+steps=length(SigVec);
+Curr = zeros(1,steps);
+
+for h=1:steps
+
+    L = 80;
+    W = 3/2*L;
+    Lb = round(L/3);
+    Wb = round(W/3);
+    Vo = 1;
+    maxI = 200;
+    delta = 1;
+    
+    Sigma = ones(W,L)*SigVec(h);
+    
+    for i=1:Wb
+        for j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        end
+    end
+    for i=round(W-Wb):W
+        for j=round(L/2-Lb/2):round(L/2+Lb/2)
+            Sigma(i,j) = 0.01;
+        end
+    end
+    
+    G = sparse(L*W,L*W);
+    B = zeros(1,L*W);
+    
+    for i=1:W
+        for j=1:L
+            n = j + (i-1)*L;
+            
+            if i==1 && j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+                B(n) = Vo;
+            elseif i==W && j==L/2
+                G(n,:) = 0;
+                G(n,n) = 1;
+            elseif j==1 && i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            elseif j==L && i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            elseif j==1 && i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j+1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==L && i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i-1,j) + 1/Sigma(i,j-1));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif j==L
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            elseif i==1
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i+1,j) + 1/Sigma(i,j+1) + ...
+                    1/Sigma(i,j-1));
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n+L) = 1/Sigma(i+1,j);
+                G(n,n-1) = 1/Sigma(i,j-1);
+            elseif i==W
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+            else
+                G(n,:) = 0;
+                G(n,n) = -(1/Sigma(i,j+1) + 1/Sigma(i,j-1) + ...
+                    1/Sigma(i-1,j) + 1/Sigma(i+1,j));
+                G(n,n-1) = 1/Sigma(i,j-1);
+                G(n,n+1) = 1/Sigma(i,j+1);
+                G(n,n-L) = 1/Sigma(i-1,j);
+                G(n,n+L) = 1/Sigma(i+1,j);
+            end
+            
+        end
+    end
+    
+    F=G\B';
+    
+    Vmap = zeros(W,L);
+    
+    for i=1:W
+        for j=1:L
+            n = j + (i-1)*L;
+            Vmap(i,j) = F(n);
+        end
+    end
+    
+    [Ex,Ey]=gradient(-Vmap);
+    
+    Jx=Sigma.*Ex;
+    Jy=Sigma.*Ey;
+    
+    Cin = sqrt(Jx(1,L/2)^2+Jy(1,L/2)^2);
+    Cout = sqrt(Jx(W,L/2)^2+Jy(W,L/2)^2);
+    Curr(h) = (Cin+Cout)*0.5;
+end
+
+figure(1)
+hold on
+plot(SigVec, Curr);
+set(gca, 'XScale', 'log')
+set(gca, 'YScale', 'log')
+title('Conductivity vs. Current Density')
+xlabel('Conductivity')
+ylabel('Current Density')
+hold off
+
+%% 2e - Discussion
+% As seen by the figure in section 2b, varying the mesh density caused the
+% current density to decrease in what appeared to be an asymptotic fashion.
+% This may mean that the simulation over estimates the current density for
+% low mesh densities. It would have been beneficial to simulated a few
+% larger mesh densities, but the time required to simulated even the largest mesh
+% densities done here was quite large. 
+% 
+% As shown in the figure in section 2c, the current density increased
+% exponentially. Since the width of the box was 120, as Wb approaches 60
+% the two insulating rectangles come close to making contact and shortening
+% the channel that the current has to traverse. Wb =59 and Wb=60 were
+% excluded from the plot as it obscured the data for the lower values, but
+% they continued along the same exponential trend.
+% 
+% In the figure for section 2d both the x and y axes are plotted
+% logarithmically to preserve the information present in the slides. For
+% these simulations the conductivity of the rectangles were kept at 1e-2.
+% As shown, for low conductivities the current density saturates, but as
+% the conductivity increases the current density drops drastically. This
+% makes some sense, as when the box has a conductivity of 1e-4 and the
+% rectangles have a conductivity of 1e-2, the rectangles are more
+% conducting than the rest of the box, but when the conductivity of the box
+% increases to 1e2 it becomes more conducting than the rectangles.
+% 
 
 ##### SOURCE END #####
 --></body></html>

@@ -41,7 +41,6 @@ currentDTime = linspace(1,1000,1000);
 
 figure(2)
 hFig2 = figure(2);
-% set(hFig2, 'Position', [500 0 600 1000])
 set(hFig2, 'Position', [0 0 1200 1000])
 
 q=0;
